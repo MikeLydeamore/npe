@@ -55,7 +55,7 @@ calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = 
     stop("Length of lambda must equal length of k")
 
   errors <- sapply(1:nrow(data), function(i) {
-    model <- nphaseexponential(lambda, k, data[i, time_variable])
+    model <- npe::calculateNPE(lambda, k, data[i, time_variable])
 
     error <- data[i, value_variable] - model
 

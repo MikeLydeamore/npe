@@ -38,24 +38,18 @@ fitnphaseexponential <- function(num_phases = 1, data, time_variable = "t", valu
   else
     rates <- k_0
 
-  #calculateRSS(lambdas = lambdas, rates = rates, data = data, time_variable = time_variable, value_variable = value_variable)
-  minimising_function_onephase <- function(p, data, time_variable, value_variable)
-  {
-    calculateRSS(lambdas = 1, rates = p, data = data, time_variable = time_variable, value_variable = value_variable)
-  }
-
   minimising_function <- function(p, data, time_variable, value_variable)
   {
     len <- length(p)/2
     lambdas <- p[1:len]
     rates <- p[(len+1):length(p)]
 
-    calculateRSS(lambdas = lambdas, rates = rates, data = data, time_variable = time_variable, value_variable = value_variable)
+    calculateRSS(lambda = lambdas, k = rates, data = data, time_variable = time_variable, value_variable = value_variable)
   }
 
   typsize <- c(lambdas, rates)
 
-  opt <- nlm(f = minimising_function, p = c(lambdas, rates), data = data, time_variable = time_variable, value_variable = value_variable, typsize = typsize)
+  opt <- stats::nlm(f = minimising_function, p = c(lambdas, rates), data = data, time_variable = time_variable, value_variable = value_variable, typsize = typsize)
 
   res <- list("estimates"=data.frame("lambdas"=opt$estimate[1:num_phases], "k"=opt$estimate[(num_phases+1):length(opt$estimate)]),
               "error"=opt$minimum,
