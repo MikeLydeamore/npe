@@ -79,8 +79,11 @@ calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = 
 #' @param value_variable Quoted string specifying the name of the value variable in \code{data}.
 #'
 #' @return The residual sum of squared error.
-calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = "value")
+calculateRSSNormalised <- function(lambda, k, data, time_variable = "t", value_variable = "value")
 {
+  if (length(k) > 1)
+    lambda <- c(lambda, 1-sum(lambda))
+
   if (any(lambda < 0))
     return (Inf)
 
@@ -88,7 +91,6 @@ calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = 
     return (Inf)
 
   errors <- sapply(1:nrow(data), function(i) {
-    lambda <- c(lambda, 1-sum(lambda))
     model <- npe::calculateNPE(lambda, k, data[i, time_variable])
 
     error <- data[i, value_variable] - model
