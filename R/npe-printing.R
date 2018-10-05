@@ -10,12 +10,12 @@ print.nphasefit <- function(x)
     cat(i, ": ", percentages[i],"\n", sep = "")
   }
   cat("Decay rates (3dp):","\n")
-  rates <- -1 * x$estimates$rates
+  rates <- -1 * x$estimates$k
   inverses <- round(1/rates, digits = 3)
 
   for (i in 1:phases)
   {
-    cat(i, ": ", rates[i]," (i.e. 1/", inverses[i],")\n", sep="")
+    cat(i, ": ", k[i]," (i.e. 1/", inverses[i],")\n", sep="")
   }
 
   cat("Sum of squared errors:",x$error,"\n")
