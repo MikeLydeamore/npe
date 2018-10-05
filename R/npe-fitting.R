@@ -44,7 +44,7 @@ fitnphaseexponential <- function(num_phases = 1, data, time_variable = "t", valu
     lambdas <- p[1:len]
     rates <- p[(len+1):length(p)]
 
-    calculateRSS(lambda = lambdas, k = rates, data = data, time_variable = time_variable, value_variable = value_variable)
+    npe::calculateRSS(lambda = lambdas, k = rates, data = data, time_variable = time_variable, value_variable = value_variable)
   }
 
   typsize <- c(lambdas, rates)
