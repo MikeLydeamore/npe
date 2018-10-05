@@ -63,3 +63,37 @@ calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = 
   })
   return (sum(errors))
 }
+
+
+
+#' Calculate residual some of squares for n-phase exponential curve
+#'
+#' Calculates the residual sum of squares for an n-phase exponential curve with
+#' initial sizes, \eqn{\lambda} and rate parameters, \eqn{k}, for a given set of data. \cr\cr
+#' Note importantly that the rate paramters, \eqn{k}, are \strong{not} negated.
+#'
+#' @param lambda Vector specifying the initial size of each group.
+#' @param k Vector specifying the decay rates of each group.
+#' @param data Data frame containing the observations.
+#' @param time_variable Quoted string specifying the name of the time variable in \code{data}.
+#' @param value_variable Quoted string specifying the name of the value variable in \code{data}.
+#'
+#' @return The residual sum of squared error.
+calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = "value")
+{
+  if (any(lambda < 0))
+    return (Inf)
+
+  if (any(lambda > 1))
+    return (Inf)
+
+  errors <- sapply(1:nrow(data), function(i) {
+    lambda <- c(lambda, 1-sum(lambda))
+    model <- npe::calculateNPE(lambda, k, data[i, time_variable])
+
+    error <- data[i, value_variable] - model
+
+    return (error^2)
+  })
+  return (sum(errors))
+}
