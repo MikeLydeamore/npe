@@ -15,7 +15,7 @@ print.nphasefit <- function(x)
 
   for (i in 1:phases)
   {
-    cat(i, ": ", k[i]," (i.e. 1/", inverses[i],")\n", sep="")
+    cat(i, ": ", rates[i]," (i.e. 1/", inverses[i],")\n", sep="")
   }
 
   cat("Sum of squared errors:",x$error,"\n")
