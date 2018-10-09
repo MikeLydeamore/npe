@@ -145,7 +145,7 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
                     time_variable = time_variable, value_variable = value_variable,
                     group_variable = group_variable, num_phases = num_phases, method="BFGS", control = list("maxit"=max_iter, fnscale = 1))
   print(opt)
-  estimates <- list("k"=opt$par[1:num_phases], "lambdas"=opt$par[(num_phases+1):length(p)])
+  estimates <- list("k"=opt$par[1:num_phases], "lambdas"=opt$par[(num_phases+1):length(par)])
   res <- list("estimates"=estimates,
               "error"=opt$minimum,
                 "AIC"=2*(length(opt$par)) + nrow(data)*log(opt$value),
