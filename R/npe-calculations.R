@@ -99,3 +99,44 @@ calculateRSSNormalised <- function(lambda, k, data, time_variable = "t", value_v
   })
   return (sum(errors))
 }
+
+calculateRSSAllInOneNormalised <- function(lambda, k, data, group_variable = "treatment_day", time_variable = "t", value_variable = "value")
+{
+  num_groups <- length(unique(data[,group_variable]))
+
+  num_phases <- length(k)
+
+  # Lambda should have length num_groups * (num_phases - 1).
+  # Seperate them out:
+  lambdas <- lambda[1:(num_phases-1)]
+  lambdas <- c(lambdas, 1-sum(lambdas))
+  for (i in 2:num_groups)
+  {
+    start <- (i-1) * (num_phases - 1) + 1
+    end <- i * (num_phases - 1)
+    l_temp <- lambda[start:end]
+    l_temp <- c(l_temp, 1-sum(l_temp))
+    lambdas <- rbind(lambdas, l_temp)
+  }
+
+  if (any(k > 0))
+    return (max(k) * 10^100)
+
+  if (any(lambdas < 0))
+    return (-1*min(lambdas) * 10^100)
+
+  if (any(lambda > 1))
+    return (max(lambdas)*10^100)
+
+  errors <- sapply(1:nrow(data), function(i) {
+
+    level <- as.numeric(data[i, group_variable])
+    model <- npe::calculateNPE(lambdas[level,], k, data[i, time_variable])
+
+    error <- data[i, value_variable] - model
+
+    return (error^2)
+  })
+
+  return (sum(errors))
+}
