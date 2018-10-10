@@ -142,7 +142,7 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
   typsize <- c(rates, lambdas)
   opt <- optimx::optimx(fn = minimising_function, par = c(rates, lambdas), data = data,
                     time_variable = time_variable, value_variable = value_variable,
-                    group_variable = group_variable, num_phases = num_phases, control=list(all.methods)=T)
+                    group_variable = group_variable, num_phases = num_phases, control=list(all.methods=T))
 
   best <- which.min(opt$value)
   k <- as.numeric(opt[best, 1:num_phases])
