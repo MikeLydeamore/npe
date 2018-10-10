@@ -145,13 +145,14 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
                     group_variable = group_variable, num_phases = num_phases, control=list(all.methods=T))
 
   best <- which.min(opt$value)
-  k <- as.numeric(opt[best, 1:num_phases])
-  lambdas <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
+  best_value <- min(opt$value)
+  k_opt <- as.numeric(opt[best, 1:num_phases])
+  lambdas_opt <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
 
-  estimates <- list("k"=k, "lambdas"=lambdas)
+  estimates <- list("k"=k_opt, "lambdas"=lambdas_opt)
   res <- list("estimates"=estimates,
-              "error"=opt$minimum,
-                "AIC"=2*(length(opt$par)) + nrow(data)*log(opt$value),
+              "error"=best_value,
+                "AIC"=2*(length(k_opt) + length(lambdas_opt)) + nrow(data)*log(best_value),
               "lambda_0"=lambdas,
               "k_0"=rates)
 
