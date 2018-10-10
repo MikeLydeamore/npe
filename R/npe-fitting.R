@@ -118,7 +118,7 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
 {
   #Initial guesses:
   if (missing(k_0))
-    rates <- -1 * 10^(-1:(-1 - num_phases + 1))#rep(-0.01, times = num_phases)
+    rates <- -1 * 10^(-1:(-1 - num_phases + 1))
   else
     rates <- k_0
 
@@ -131,21 +131,24 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
     lambdas <- c(lambdas, lambdas_all[1:(length(lambdas_all)-1)])
   }
 
-  #lambdas <- c(0.1, 0.2, 0.3, 0.4)
   minimising_function <- function(p, data, time_variable, value_variable, group_variable, num_phases)
   {
     len <- floor(length(p)/2)
     rates <- p[1:num_phases]
     lambdas <- p[(num_phases+1):length(p)]
-   # print(c(rates,lambdas))
+
     npe::calculateRSSAllInOneNormalised(lambda = lambdas, k = rates, data = data, time_variable = time_variable, value_variable = value_variable, group_variable)
   }
   typsize <- c(rates, lambdas)
-  opt <- stats::optim(fn = minimising_function, par = c(rates, lambdas), data = data,
+  opt <- optimx::optimx(fn = minimising_function, par = c(rates, lambdas), data = data,
                     time_variable = time_variable, value_variable = value_variable,
-                    group_variable = group_variable, num_phases = num_phases, method="BFGS", control = list("maxit"=max_iter, fnscale = 1))
-  print(opt)
-  estimates <- list("k"=opt$par[1:num_phases], "lambdas"=opt$par[(num_phases+1):length(par)])
+                    group_variable = group_variable, num_phases = num_phases, control=list(all.methods)=T)
+
+  best <- which.min(opt$value)
+  k <- as.numeric(opt[best, 1:num_phases])
+  lambdas <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
+
+  estimates <- list("k"=k, "lambdas"=lambdas)
   res <- list("estimates"=estimates,
               "error"=opt$minimum,
                 "AIC"=2*(length(opt$par)) + nrow(data)*log(opt$value),
