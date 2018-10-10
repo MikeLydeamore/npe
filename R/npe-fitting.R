@@ -114,6 +114,10 @@ fitnphaseexponentialnormalised <- function(num_phases = 1, data, time_variable =
   return (res)
 }
 
+
+#' Fit an n-phase exponential distribution to normalised data
+#'
+#'
 fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_variable = "t", value_variable = "dna", group_variable = "treatment_day", k_0, max_iter = 1e6)
 {
   #Initial guesses:
@@ -139,15 +143,34 @@ fitnphaseexponentialnormalisedallinone <- function(num_phases = 1, data, time_va
 
     npe::calculateRSSAllInOneNormalised(lambda = lambdas, k = rates, data = data, time_variable = time_variable, value_variable = value_variable, group_variable)
   }
-  typsize <- c(rates, lambdas)
+
+  minimising_function_one <- function(p, data, time_variable, value_variable, group_variable)
+  {
+    num_groups <- length(unique(data[, group_variable]))
+
+    npe::calculateRSSAllInOneNormalised(lambda = rep(1, times = num_groups), k = p, data = data, group_variable = group_variable, time_variable = time_variable, value_variable = value_variable)
+  }
+
+  if (num_phases == 1)
+  {
+    opt <- optimx::optimx(fn = minimising_function_one, par = rates, data = data,
+                          time_variable = time_variable, value_variable = value_variable,
+                          group_variable = group_variable, control=list(all.methods=T))
+  }
+  else
+  {
   opt <- optimx::optimx(fn = minimising_function, par = c(rates, lambdas), data = data,
-                    time_variable = time_variable, value_variable = value_variable,
-                    group_variable = group_variable, num_phases = num_phases, control=list(all.methods=T))
+                  time_variable = time_variable, value_variable = value_variable,
+                  group_variable = group_variable, num_phases = num_phases, control=list(all.methods=T))
+  }
 
   best <- which.min(opt$value)
   best_value <- min(opt$value)
   k_opt <- as.numeric(opt[best, 1:num_phases])
-  lambdas_opt <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
+  if (num_phases > 1)
+    lambdas_opt <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
+  else
+    lambdas_opt <- NA
 
   estimates <- list("k"=k_opt, "lambdas"=lambdas_opt)
   res <- list("estimates"=estimates,
