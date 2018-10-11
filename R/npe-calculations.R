@@ -138,7 +138,10 @@ calculateRSSAllInOneNormalised <- function(lambda, k, data, group_variable = "tr
   errors <- sapply(1:nrow(data), function(i) {
 
     level <- as.numeric(data[i, group_variable])
-    model <- npe::calculateNPE(lambdas[level,], k, data[i, time_variable])
+    if (num_groups > 1)
+      model <- npe::calculateNPE(lambdas[level,], k, data[i, time_variable])
+    else
+      model <- npe::calculateNPE(lambdas[level], k, data[i, time_variable])
 
     error <- data[i, value_variable] - model
 
