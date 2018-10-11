@@ -111,7 +111,7 @@ calculateRSSAllInOneNormalised <- function(lambda, k, data, group_variable = "tr
   lambdas <- lambda[1:(num_phases-1)]
   if (num_phases > 1)
     lambdas <- c(lambdas, 1-sum(lambdas))
-
+  lambdas <- rbind(lambdas)
   if (num_groups > 1)
   {
     for (i in 2:num_groups)
@@ -138,10 +138,7 @@ calculateRSSAllInOneNormalised <- function(lambda, k, data, group_variable = "tr
   errors <- sapply(1:nrow(data), function(i) {
 
     level <- as.numeric(data[i, group_variable])
-    if (num_groups > 1)
-      model <- npe::calculateNPE(lambdas[level,], k, data[i, time_variable])
-    else
-      model <- npe::calculateNPE(lambdas[level], k, data[i, time_variable])
+    model <- npe::calculateNPE(lambdas[level], k, data[i, time_variable])
 
     error <- data[i, value_variable] - model
 
