@@ -111,15 +111,20 @@ calculateRSSAllInOneNormalised <- function(lambda, k, data, group_variable = "tr
   lambdas <- lambda[1:(num_phases-1)]
   if (num_phases > 1)
     lambdas <- c(lambdas, 1-sum(lambdas))
-  for (i in 2:num_groups)
+
+  if (num_groups > 1)
   {
-    start <- (i-1) * (num_phases - 1) + 1
-    end <- i * (num_phases - 1)
-    l_temp <- lambda[start:end]
-    if (num_phases  > 1)
-      l_temp <- c(l_temp, 1-sum(l_temp))
-    lambdas <- rbind(lambdas, l_temp)
+    for (i in 2:num_groups)
+    {
+      start <- (i-1) * (num_phases - 1) + 1
+      end <- i * (num_phases - 1)
+      l_temp <- lambda[start:end]
+      if (num_phases  > 1)
+        l_temp <- c(l_temp, 1-sum(l_temp))
+      lambdas <- rbind(lambdas, l_temp)
+    }
   }
+
 
   if (any(k > 0))
     return (max(k) * 10^100)
