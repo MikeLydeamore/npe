@@ -3,7 +3,7 @@ predict.nphasefitallinone <- function(fit, newdata, time_variable="t", group_var
   groups <- unique(newdata[, group_variable])
   num_phases <- length(fit$estimates$k)
 
-  lapply(groups, function(g) {
+  l <- lapply(groups, function(g) {
     whichgroup <- which(g == groups)
     if (num_phases == 1)
       y <- exp(fit$estimates$k[whichgroup] * newdata[,"time_variable"])
@@ -24,4 +24,6 @@ predict.nphasefitallinone <- function(fit, newdata, time_variable="t", group_var
 
     data.frame(time_variable = time_variable, y = y, group_variable = g)
   })
+
+  return (do.call(rbind, l))
 }
