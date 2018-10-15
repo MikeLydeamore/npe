@@ -22,7 +22,11 @@ predict.nphasefitallinone <- function(fit, newdata, time_variable="t", group_var
       y <- y + (1 - sum(fit$estimates$k[startindex:endindex])) * exp(fit$estimates$k[whichgroup] * newdata[,time_variable])
     }
 
-    data.frame(time_variable = time_variable, y = y, group_variable = g)
+    d <- data.frame("t"=newdata[,time_variable], y = y, group_variable = g)
+    colnames(d)[1] <- time_variable
+    colnames(d)[3] <- group_variable
+
+    return (d)
   })
 
   return (do.call(rbind, l))
