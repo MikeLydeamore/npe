@@ -49,11 +49,28 @@ fitnphaseexponential <- function(num_phases = 1, data, time_variable = "t", valu
 
   typsize <- c(lambdas, rates)
 
-  opt <- stats::nlm(f = minimising_function, p = c(lambdas, rates), data = data, time_variable = time_variable, value_variable = value_variable, typsize = typsize)
+  opt <- optim::optimx(fn = minimising_function, par = c(lambdas, rates), data = data,
+                       time_variable = time_variable, value_variable = value_variable, contorl=list(all.methods=T))
 
-  res <- list("estimates"=data.frame("lambdas"=opt$estimate[1:num_phases], "k"=opt$estimate[(num_phases+1):length(opt$estimate)]),
-              "error"=opt$minimum,
-              "AIC"=2*num_phases + nrow(data)*log(opt$minimum))
+  best <- which.min(opt$value)
+  best_value <- min(opt$value)
+  k_opt <- as.numeric(opt[best, 1:num_phases])
+  if (num_phases > 1)
+  {
+    lambdas_opt <- as.numeric(opt[best, (num_phases+1):(num_phases + length(lambdas))])
+  }
+  else
+  {
+    lambdas_opt <- NA
+  }
+
+  estimates <- list("k"=k_opt, "lambdas"=lambdas_opt)
+  res <- list("estimates"=estimates,
+            "error"=best_value,
+            "AIC"=2*(length(k_opt) + length(lambdas_opt)) + nrow(data)*log(best_value),
+            "lambda_0"=lambdas,
+            "k_0"=rates)
+
   class(res) <- "nphasefit"
   return (res)
 }
