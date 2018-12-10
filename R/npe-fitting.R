@@ -49,7 +49,7 @@ fitnphaseexponential <- function(num_phases = 1, data, time_variable = "t", valu
 
   typsize <- c(lambdas, rates)
 
-  opt <- optim::optimx(fn = minimising_function, par = c(lambdas, rates), data = data,
+  opt <- optimx::optimx(fn = minimising_function, par = c(lambdas, rates), data = data,
                        time_variable = time_variable, value_variable = value_variable, contorl=list(all.methods=T))
 
   best <- which.min(opt$value)
