@@ -59,7 +59,7 @@ calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = 
 
     error <- data[i, value_variable] - model
 
-    return (error^2)
+    return (error^2/data[i, value_variable]^2)
   })
   return (sum(errors))
 }
