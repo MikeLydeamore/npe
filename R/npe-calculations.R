@@ -49,7 +49,7 @@ calculateNPE <- function(lambda, k, t)
 calculateRSS <- function(lambda, k, data, time_variable = "t", value_variable = "value")
 {
   if (any(lambda < 0))
-    return (Inf)
+    return (10^64)
 
   if (length(lambda) != length(k))
     stop("Length of lambda must equal length of k")
